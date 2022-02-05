@@ -2,11 +2,10 @@ from logging import info
 
 import requests
 from constants import ImageFilename
+from db import WordImage, engine
 from settings import GOOGLE_CUSTOM_SEARCH_API_KEY, GOOGLE_SEARCH_ENGINE_ID, IMAGES_ROOT
 from sqlalchemy.orm import Session
 from sqlalchemy.orm.exc import MultipleResultsFound, NoResultFound
-
-from db import WordImage, engine
 
 
 def download_image_for_url(url: str, filename: ImageFilename) -> None:
@@ -18,6 +17,7 @@ def download_image_for_url(url: str, filename: ImageFilename) -> None:
     )
     image_response.raise_for_status()
     img_data = image_response.content
+    info(f"Saving image to: {filename}")
     with open(filename, "wb") as handler:
         handler.write(img_data)
 
@@ -60,12 +60,11 @@ def download_image_for_text(text: str) -> ImageFilename:
 
 
 def get_image_for_word(word: str, part_of_speech: str) -> WordImage:
-    word = "Alice"
-    part_of_speech = "N"
     with Session(engine) as session:
         results = session.query(WordImage).filter(
             WordImage.word == word, WordImage.part_of_speech == part_of_speech
         )
+        pass
 
     try:
         word_image = results.one()
@@ -74,16 +73,13 @@ def get_image_for_word(word: str, part_of_speech: str) -> WordImage:
             f"Multiple results for word {word} with part of speech {part_of_speech}."
         )
     except NoResultFound:
-        import pdb
-
-        pdb.set_trace()
         pass
     else:
         return word_image
 
     filename = download_image_for_text(word)
 
-    with Session(engine) as session:
+    with Session(engine, expire_on_commit=False) as session:
         word_image = WordImage(
             word=word, part_of_speech=part_of_speech, image_path=filename
         )

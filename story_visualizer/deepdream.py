@@ -1,8 +1,11 @@
 from __future__ import division
 
+import os
+
+# hide all the 100s of net initialization logs
+os.environ["GLOG_minloglevel"] = "2"
 import datetime
 import getopt
-import os
 import pprint
 import sys
 from functools import partial
@@ -126,7 +129,7 @@ def deepdream(
             vis = deprocess(net, src.data[0])
             if not clip:  # adjust image contrast if clipping is disabled
                 vis = vis * (255.0 / np.percentile(vis, 99.98))
-            showarray(vis)
+            #showarray(vis)
             print(octave, i, end, vis.shape)
             if print_every_step or i == iter_n - 1:
                 save_image_function(vis, filename="{}_{}.jpg".format(octave, i))
@@ -211,7 +214,7 @@ def generate_and_save_dream(
     directory = "{}/".format(folder_name)
     save_image_function = partial(save_deepdream_image, directory=directory)
     try:
-        os.mkdir(IMAGES_BASE_DIR + directory)
+        os.makedirs(IMAGES_BASE_DIR + directory)
     except OSError:
         pass
     start_dt = datetime.datetime.now()

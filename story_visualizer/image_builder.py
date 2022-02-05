@@ -1,15 +1,16 @@
+import logging
 import os
 from logging import info
 from typing import Callable, Optional
+from pathlib import Path
 
 import git
 from constants import Chunk
+from db import VisualizedChunk
 from image_retriever import get_image_for_word
 from PIL.Image import Image, open
 from settings import IMAGES_ROOT
 from summarizer import get_summary
-
-from db import VisualizedChunk
 
 TopLeft = lambda fg, bg: (0, 0)
 TopRight = lambda fg, bg: (bg.size[0] - fg.size[0], 0)
@@ -42,9 +43,9 @@ def run_deepdream(
     n_iter: int = 4,
 ) -> None:
     target_image_cmd = f"-g {IMAGES_ROOT}/themes/{target_image}" if target_image else ""
-    os.system(
-        f"../deepdream.sh -i {intermediary_path} -o {image_path} -n {n_iter} {target_image_cmd}"
-    )
+    cmd = f"./deepdream.sh -i {intermediary_path} -o {image_path} -n {n_iter} {target_image_cmd}"
+    info(f"Executing deepdream command:\n{cmd}")
+    os.system(cmd)
 
 
 def visualize_chunk(
@@ -53,7 +54,7 @@ def visualize_chunk(
     info("Summarizing chunk.")
     subject, verb, obj1, obj2 = get_summary(chunk)
 
-    info("Retrieving images for summary.")
+    info(f"Retrieving images for summary {subject, verb, obj1, obj2}.")
     subject_word_image_path = get_image_for_word(subject, "N").get_path()
     subject_word_image = open(subject_word_image_path)
     verb_word_image_path = get_image_for_word(verb, "V").get_path()
@@ -68,6 +69,7 @@ def visualize_chunk(
     result = apply_foreground(obj1_word_image, result, TopRight)
     result = apply_foreground(obj2_word_image, result, BottomRight)
     intermediary_path = f"images/intermediary/{image_folder}.png"
+    Path('/'.join(f"{IMAGES_ROOT}/intermediary/{image_folder}".split('/')[:-1])).mkdir(parents=True, exist_ok=True)
     result.save(f"{IMAGES_ROOT}/intermediary/{image_folder}.png")
 
     info("Applying DeepDream.")
