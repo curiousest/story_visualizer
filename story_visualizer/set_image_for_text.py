@@ -1,5 +1,5 @@
-import sys
 import getopt
+import sys
 
 from image_retriever import set_image_for_text
 

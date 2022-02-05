@@ -9,7 +9,6 @@ from settings import GOOGLE_CUSTOM_SEARCH_API_KEY, GOOGLE_SEARCH_ENGINE_ID, IMAG
 from sqlalchemy.orm import Session
 from sqlalchemy.orm.exc import MultipleResultsFound, NoResultFound
 
-
 BASE_SOURCE_FOLDER = f"{IMAGES_ROOT}/source/"
 
 
@@ -29,7 +28,7 @@ def download_image_for_url(url: str, filename: ImageFilename) -> None:
 
 
 def image_filename(word: str) -> str:
-    return f'{word}{datetime.datetime.now().isoformat()[:19]}.jpg'
+    return f"{word}{datetime.datetime.now().isoformat()[:19]}.jpg"
 
 
 def download_image_for_text(text: str) -> Tuple[ImageFilename, Url]:
@@ -71,7 +70,10 @@ def set_image_for_text(*, url: str, word: str, part_of_speech: str) -> WordImage
     download_image_for_url(url, filename)
     with Session(engine, expire_on_commit=False) as session:
         word_image = WordImage(
-            word=word, part_of_speech=part_of_speech, image_path=filename, source_url=url
+            word=word,
+            part_of_speech=part_of_speech,
+            image_path=filename,
+            source_url=url,
         )
         session.add(word_image)
         session.commit()
@@ -100,7 +102,10 @@ def get_image_for_word(word: str, part_of_speech: str) -> WordImage:
 
     with Session(engine, expire_on_commit=False) as session:
         word_image = WordImage(
-            word=word, part_of_speech=part_of_speech, image_path=filename, source_url=url
+            word=word,
+            part_of_speech=part_of_speech,
+            image_path=filename,
+            source_url=url,
         )
         session.add(word_image)
         session.commit()

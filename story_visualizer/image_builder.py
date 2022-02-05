@@ -1,8 +1,8 @@
 import logging
 import os
 from logging import info
-from typing import Callable, Optional
 from pathlib import Path
+from typing import Callable, Optional
 
 import git
 from constants import Chunk
@@ -69,7 +69,9 @@ def visualize_chunk(
     result = apply_foreground(obj1_word_image, result, TopRight)
     result = apply_foreground(obj2_word_image, result, BottomRight)
     intermediary_path = f"images/intermediary/{image_folder}.png"
-    Path('/'.join(f"{IMAGES_ROOT}/intermediary/{image_folder}".split('/')[:-1])).mkdir(parents=True, exist_ok=True)
+    Path("/".join(f"{IMAGES_ROOT}/intermediary/{image_folder}".split("/")[:-1])).mkdir(
+        parents=True, exist_ok=True
+    )
     result.save(f"{IMAGES_ROOT}/intermediary/{image_folder}.png")
 
     info("Applying DeepDream.")

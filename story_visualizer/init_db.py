@@ -1,6 +1,5 @@
-from db import engine, Base
-from sqlalchemy_utils import database_exists, create_database
-
+from db import Base, engine
+from sqlalchemy_utils import create_database, database_exists
 
 if not database_exists(engine.url):
     create_database(engine.url)

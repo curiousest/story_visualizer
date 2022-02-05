@@ -129,7 +129,7 @@ def deepdream(
             vis = deprocess(net, src.data[0])
             if not clip:  # adjust image contrast if clipping is disabled
                 vis = vis * (255.0 / np.percentile(vis, 99.98))
-            #showarray(vis)
+            # showarray(vis)
             print(octave, i, end, vis.shape)
             if print_every_step or i == iter_n - 1:
                 save_image_function(vis, filename="{}_{}.jpg".format(octave, i))
