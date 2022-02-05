@@ -14,10 +14,10 @@ text_body = get_text(
 )
 logging.info("Splitting text body into chunks")
 chunks = get_chunks(text_body)
-chapter = 2
-chunk = 1
+chapter = 1
+chunk = 0
 visualize_chunk(
-    chunk=chunks[chapter+1][chunk],
+    chunk=chunks[chapter][chunk],
     image_folder=f"aliceinwonderland/chapter{chapter}/chunk{chunk}",
     text_body_hash=str(hash(text_body)),
 )

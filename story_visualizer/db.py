@@ -1,5 +1,5 @@
 from settings import DB_PATH, IMAGES_ROOT
-from sqlalchemy import Column, Integer, String, create_engine
+from sqlalchemy import Column, Integer, String, Text, create_engine
 from sqlalchemy.ext.declarative import declarative_base
 
 Base = declarative_base()
@@ -12,6 +12,7 @@ class WordImage(Base):
     word = Column(String(150), nullable=False)
     part_of_speech = Column(String(250), nullable=True)
     image_path = Column(String(250), nullable=False)
+    source_url = Column(Text, nullable=True)
 
     def get_path(self):
         return f"{IMAGES_ROOT}/source/{self.image_path}"

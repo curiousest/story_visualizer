@@ -15,3 +15,4 @@ Verb = str
 
 
 ImageFilename = str
+Url = str
