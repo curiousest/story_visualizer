@@ -14,7 +14,7 @@ text_body = get_text(
 )
 logging.info("Splitting text body into chunks")
 chunks = get_chunks(text_body)
-chapter = 1
+chapter = 3
 chunk = 0
 visualize_chunk(
     chunk=chunks[chapter][chunk],

@@ -1,11 +1,18 @@
+import itertools
 from logging import info
 from string import punctuation
-from typing import Tuple
+from typing import List, Tuple
 
 import nltk
-from constants import Chunk, Object, Subject, Verb, WordFrequencies
-from nltk.corpus import stopwords
+from constants import Chunk, Object, Subject, TokenizedText, Verb, WordFrequencies
+from nltk.corpus import stopwords, wordnet
+from nltk.stem import WordNetLemmatizer
 from nltk.tokenize import word_tokenize
+
+wordnet_lemmatizer = WordNetLemmatizer()
+nltk.download("omw-1.4")
+nltk.download("wordnet")
+wordnet_map = {"N": wordnet.NOUN, "V": wordnet.VERB, "J": wordnet.ADJ, "R": wordnet.ADV}
 
 nltk.download("stopwords")
 stop_words = stopwords.words("english")
@@ -22,12 +29,9 @@ def include_word(word):
     return True
 
 
-def get_word_frequencies(chapter_chunk: Chunk) -> WordFrequencies:
-    text = " ".join(chapter_chunk)
-    tokens = word_tokenize(text)
-    tokens_pos = nltk.pos_tag(tokens)
+def get_word_frequencies(tokenized_text: TokenizedText) -> WordFrequencies:
     word_frequencies: WordFrequencies = {}
-    for word, pos in tokens_pos:
+    for word, pos in tokenized_text:
         if include_word(word):
             if (word, pos[0]) not in word_frequencies.keys():
                 # pos[0] condenses parts of speech
@@ -52,4 +56,27 @@ def get_summary_words(
 
 
 def get_summary(chunk: Chunk) -> Tuple[Subject, Verb, Object, Object]:
-    return get_summary_words(get_word_frequencies(chunk))
+    processed_chunk: List[TokenizedText] = [
+        preprocess_text(paragraph) for paragraph in chunk
+    ]
+    word_frequencies = get_word_frequencies(itertools.chain(*processed_chunk))
+    return get_summary_words(word_frequencies)
+
+
+def lemmatize(word: str, pos: str):
+    pos = wordnet_map.get(pos[0], None)
+    return (
+        wordnet_lemmatizer.lemmatize(word, pos=pos)
+        if pos
+        else wordnet_lemmatizer.lemmatize(word)
+    )
+
+
+def preprocess_text(text: str) -> TokenizedText:
+    tokens: List[str] = word_tokenize(text)
+    tokens_pos: TokenizedText = nltk.pos_tag(tokens)
+    print(tokens_pos)
+    lemmatized_text: TokenizedText = [
+        (lemmatize(word, pos), pos) for (word, pos) in tokens_pos
+    ]
+    return lemmatized_text

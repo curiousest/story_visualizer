@@ -7,6 +7,7 @@ ChapterChunk = List[Chunk]
 CHUNK_SIZE = 2500
 
 WordPartOfSpeech = Tuple[str, str]
+TokenizedText = List[WordPartOfSpeech]
 WordFrequencies = Dict[WordPartOfSpeech, int]
 
 Subject = str
