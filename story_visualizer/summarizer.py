@@ -4,10 +4,18 @@ from string import punctuation
 from typing import List, Tuple
 
 import nltk
-from constants import Chunk, Object, Subject, TokenizedText, Verb, WordFrequencies
 from nltk.corpus import stopwords, wordnet
 from nltk.stem import WordNetLemmatizer
 from nltk.tokenize import word_tokenize
+
+from story_visualizer.constants import (
+    Chunk,
+    Object,
+    Subject,
+    TokenizedText,
+    Verb,
+    WordFrequencies,
+)
 
 wordnet_lemmatizer = WordNetLemmatizer()
 nltk.download("omw-1.4")
@@ -73,9 +81,8 @@ def lemmatize(word: str, pos: str):
 
 
 def preprocess_text(text: str) -> TokenizedText:
-    tokens: List[str] = word_tokenize(text)
+    tokens: List[str] = word_tokenize(text.lower())
     tokens_pos: TokenizedText = nltk.pos_tag(tokens)
-    print(tokens_pos)
     lemmatized_text: TokenizedText = [
         (lemmatize(word, pos), pos) for (word, pos) in tokens_pos
     ]
